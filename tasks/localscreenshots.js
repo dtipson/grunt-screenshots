@@ -1,5 +1,4 @@
-/*
- * grunt-autoshot
+/* grunt-autoshot
  * https://github.com//grunt-autoshot
  *
  * Copyright (c) 2013 Ferrari Lee
@@ -13,6 +12,8 @@ module.exports = function(grunt) {
   var st = require('st');
   var http = require('http');
   var async = require('async');
+  var page = require('webpage');
+  var system = require('system');
 
   grunt.registerMultiTask('localscreenshots', 'Create a quick screenshot for your site which could help for document or testing.', function() {
     var done = this.async();
@@ -60,7 +61,9 @@ module.exports = function(grunt) {
             page.render(path + '/' + dest, function() {
               grunt.log.writeln('Take a screenshot to ' + dest);
               ph.exit();
-              cb();
+              window.setTimeout(function () {
+                  cb();
+              },1500);
             });
           });
         });
@@ -88,7 +91,9 @@ module.exports = function(grunt) {
             url: ('http://localhost:' + options.local.port + '/' + page + options.hash),
             viewport: view
           }, function() {
-            index === (options.viewport.length - 1) ? cb() : false;
+            window.setTimeout(function () {
+                index === (options.viewport.length - 1) ? cb() : false;
+            },1500);
           });
         });
 
