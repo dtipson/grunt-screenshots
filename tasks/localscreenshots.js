@@ -19,6 +19,7 @@ module.exports = function(grunt) {
     var options = this.options({
       path: __dirname + '/screenshot',
       type: 'jpg',
+      hash: '',
       name: 'screenshot',
       viewport: ['1920x1080'],
       files: this.filesSrc
@@ -44,7 +45,7 @@ module.exports = function(grunt) {
             }
           }
           page.set('zoomFactor', 1);
-          page.open(url, function(err, status) {
+          page.open(url+'hash', function(err, status) {
             var dest = filename + '.' + type;
 
             // Background problem under self-host server
@@ -84,7 +85,7 @@ module.exports = function(grunt) {
             path: options.path,
             filename: page.replace('.html', '') + '-' + view,
             type: options.type,
-            url: 'http://localhost:' + options.local.port + '/' + page,
+            url: ('http://localhost:' + options.local.port + '/' + page + options.hash),
             viewport: view
           }, function() {
             index === (options.viewport.length - 1) ? cb() : false;

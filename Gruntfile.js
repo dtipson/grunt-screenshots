@@ -29,24 +29,18 @@ module.exports = function(grunt) {
     },
 
     // Configuration to be run (and then tested).
-    localscreenhshots: {
-      default_options: {
+    localscreenshots: {
         options: {
-          path: './test/screenshot',
-          filename: 'screenshot',
-          type: 'jpg',
-          remote: 'http://github.com/',
-          local: {
-            path: './test/src',
-            port: 7788
-          },
-          viewport: [
-            '1920x1080',
-            '1024x768',
-            '640x960'
-          ]
+            path: 'img/screenshots',
+            type: 'png',
+            hash: '#noquickd',
+            local : {
+                path: '/Users/dtipson/Sites/git/bsd-custom-donate-jekyll/webroot/_site',
+                port: 4444
+            },
+            viewport: ['320x800','480x800', '768x1024', '1024x1024','1280x1024'],
         },
-      },
+        src: ['/Users/dtipson/Sites/git/bsd-custom-donate-jekyll/_site/examples/*.html']
     },
 
     // Unit tests.
