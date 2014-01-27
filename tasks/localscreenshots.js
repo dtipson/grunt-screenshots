@@ -13,16 +13,17 @@ module.exports = function(grunt) {
   var http = require('http');
   var async = require('async');
 
+
   grunt.registerMultiTask('localscreenshots', 'Create a quick screenshot for your site which could help for document or testing.', function() {
-    var done = this.async();
-    var options = this.options({
-      path: __dirname + '/screenshot',
-      type: 'jpg',
-      hash: '',
-      name: 'screenshot',
-      viewport: ['1920x1080'],
-      files: this.filesSrc
-    });
+    var done = this.async(),
+        options = this.options({
+            path: __dirname + '/screenshot',
+            type: 'jpg',
+            hash: '',
+            name: 'screenshot',
+            viewport: ['1920x1080'],
+            files: this.filesSrc
+        });
 
     // Core screenshot function using phamtonJS
     var screenshot = function(opts, cb) {
@@ -48,6 +49,7 @@ module.exports = function(grunt) {
             var dest = filename + '.' + type;
 
             // Background problem under self-host server
+            /*
             page.evaluate(function() {
               var style = document.createElement('style');
               var text = document.createTextNode('body { background: #fff }');
@@ -55,13 +57,14 @@ module.exports = function(grunt) {
               style.appendChild(text);
               document.head.insertBefore(style, document.head.firstChild);
             });
+            */
             setTimeout(function () {
                 page.render(path + '/' + dest, function() {
-                  grunt.log.writeln('Take a screenshot to ' + dest);
+                  grunt.log.writeln('Screenshot taken: ' + dest);
                   ph.exit();
                   cb();
                 });
-            },1500);
+            },200);
           });
         });
       });
@@ -77,28 +80,28 @@ module.exports = function(grunt) {
         path: options.local.path
       })
     ).listen(options.local.port, function() {
-      var re = new RegExp('^'+ options.local.path +'\/+')
+      var re = new RegExp('^'+ options.local.path +'\/+');
+
       async.eachSeries(options.files, function(page, cb) {
         page = page.replace(re, '');
-        options.viewport.forEach(function(view, index) {
+        async.eachSeries(options.viewport,function(view, cbinner) {
           screenshot({
             path: options.path,
             filename: page.replace('.html', '') + '-' + view,
             type: options.type,
             url: ('http://localhost:' + options.local.port + '/' + page + options.hash),
             viewport: view
-          }, function() {
-            index === (options.viewport.length - 1) ? cb() : false;
-          });
+          }, cbinner);
+        },function(){
+            cb();
         });
-
       }, function() {
         grunt.event.emit('finish');
       });
     });
 
     // Listen event to decide when can stop the task 
-    grunt.event.on('finish', function() {
+    grunt.event.once('finish', function() {
       done();
     });
   });
